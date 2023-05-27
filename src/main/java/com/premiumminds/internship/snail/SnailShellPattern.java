@@ -9,53 +9,48 @@ class SnailShellPattern implements ISnailShellPattern {
 	public Future<int[]> getSnailShell(int[][] matrix) {
 		CompletableFuture<int[]> future = new CompletableFuture<>();
 
-		// Create a result array and an index pointer
+		// create a result array and an index pointer
 		int[] result = new int[matrix.length * matrix[0].length];
 		int resultIndex = 0;
 
-		// Count the number of iterations (completed laps around the matrix)
-		int totalIterations = Math.min(matrix.length / 2, matrix[0].length / 2);
-		for (int iterationCount = 0; iterationCount < totalIterations; iterationCount++) {
+		// define initial boundaries
+		int top = 0;
+		int bottom = matrix.length - 1;
+		int left = 0;
+		int right = matrix[0].length - 1;
 
-			// Traverse top row
-			for (int i = iterationCount; i < matrix[iterationCount].length - iterationCount; i++) {
-				result[resultIndex] = matrix[iterationCount][i];
+		while (top <= bottom && left <= right) {
+
+			// top boundary
+			for (int i = left; i <= right; i++) {
+				result[resultIndex] = matrix[top][i];
 				resultIndex++;
 			}
+			top++;
 
-			// Traverse right column
-			for (int i = iterationCount + 1; i < matrix.length - iterationCount - 1; i++) {
-				result[resultIndex] = matrix[i][matrix[i].length - 1 - iterationCount];
+			// right boundary
+			for (int i = top; i <= bottom; i++) {
+				result[resultIndex] = matrix[i][right];
 				resultIndex++;
 			}
+			right--;
 
-			// Traverse bottom row
-			for (int i = matrix[iterationCount].length - iterationCount - 1; i >= iterationCount; i--) {
-				result[resultIndex] = matrix[matrix.length - 1 - iterationCount][i];
-				resultIndex++;
+			// bottom boundary
+			if (top <= bottom) {
+				for (int i = right; i >= left; i--) {
+					result[resultIndex] = matrix[bottom][i];
+					resultIndex++;
+				}
+				bottom--;
 			}
 
-			// Traverse left column
-			for (int i = matrix.length - 2 - iterationCount; i > iterationCount; i--) {
-				result[resultIndex] = matrix[i][iterationCount];
-				resultIndex++;
-			}
-		}
-
-		// Handle incomplete iterations
-		int remainingRows = matrix.length - 2 * totalIterations;
-		int remainingCols = matrix[0].length - 2 * totalIterations;
-		if (remainingRows == 1) {
-			int row = matrix.length / 2;
-			for (int i = totalIterations; resultIndex != result.length; i++) {
-				result[resultIndex] = matrix[row][i];
-				resultIndex++;
-			}
-		} else if (remainingCols == 1) {
-			int col = matrix[0].length / 2;
-			for (int i = totalIterations; resultIndex != result.length; i++) {
-				result[resultIndex] = matrix[i][col];
-				resultIndex++;
+			// left boundary
+			if (left <= right) {
+				for (int i = bottom; i >= top; i--) {
+					result[resultIndex] = matrix[i][left];
+					resultIndex++;
+				}
+				left++;
 			}
 		}
 
