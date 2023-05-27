@@ -31,8 +31,7 @@ class SnailShellPattern implements ISnailShellPattern {
 
 		// if the matrix has odd dimensions, there will be an incomplete iteration left
 		// at the end
-		if (matrix.length % 2 == 1 || matrix[0].length % 2 == 1)
-			getRemainder(matrix, result, resultItems);
+		getRemainder(matrix, result, resultItems);
 
 		future.complete(result);
 		return future;
@@ -51,7 +50,7 @@ class SnailShellPattern implements ISnailShellPattern {
 	}
 
 	private int getRight(int[][] matrix, int iteration, int[] result, int resultItems) {
-		for (int i = iteration + 1; i < matrix.length - iteration; i++) {
+		for (int i = iteration + 1; i < matrix.length - iteration - 1; i++) {
 			result[resultItems] = matrix[i][matrix[i].length - 1 - iteration];
 			resultItems++;
 		}
@@ -59,7 +58,7 @@ class SnailShellPattern implements ISnailShellPattern {
 	}
 
 	private int getBottom(int[][] matrix, int iteration, int[] result, int resultItems) {
-		for (int i = matrix[iteration].length - 2 - iteration; i >= iteration; i--) {
+		for (int i = matrix[iteration].length - iteration - 1; i >= iteration; i--) {
 			result[resultItems] = matrix[matrix.length - 1 - iteration][i];
 			resultItems++;
 		}
@@ -77,13 +76,13 @@ class SnailShellPattern implements ISnailShellPattern {
 	private void getRemainder(int[][] matrix, int[] result, int resultItems) {
 		if (matrix.length % 2 == 1) {
 			int row = matrix.length / 2;
-			for (int i = matrix[0].length - 2 - resultItems; i >= resultItems; i--) {
+			for (int i = countIterations(matrix); resultItems != result.length; i++) {
 				result[resultItems] = matrix[row][i];
 				resultItems++;
 			}
 		} else if (matrix[0].length % 2 == 1) {
 			int col = matrix[0].length / 2;
-			for (int i = matrix.length - 2 - resultItems; i >= resultItems; i--) {
+			for (int i = countIterations(matrix); resultItems != result.length; i++) {
 				result[resultItems] = matrix[i][col];
 				resultItems++;
 			}
